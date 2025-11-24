@@ -1,10 +1,12 @@
 import { Container, Sprite, Assets } from 'pixi.js';
+import { PlayWheelButton } from '../ui/pirate/PlayWheelButton';
 
 export class PreviewScreen extends Container {
     private bg!: Sprite;
     private logo!: Sprite;
     private barrelBoard!: Sprite;
-    private playWheel!: Sprite;
+    // private playWheel!: Sprite;
+    private playWheelButton!: PlayWheelButton;
     private Gol_D_Roger!: Sprite;
     private descriptionPreview!: Sprite;
     private pagination!: Sprite;
@@ -39,13 +41,11 @@ export class PreviewScreen extends Container {
         this.barrelBoard.scale.set(.58);
         this.addChild(this.barrelBoard);
 
-        const playWheelTexture = await Assets.load("/raw-assets/pirate/play-wheel-button.png");
-        this.playWheel = new Sprite(playWheelTexture);
-        this.playWheel.anchor.set(0.5);
-        this.playWheel.x = this.bg.width * .68;
-        this.playWheel.y = this.bg.height * .43;
-        this.playWheel.scale.set(.68);
-        this.addChild(this.playWheel);
+
+        this.playWheelButton = new PlayWheelButton();
+        this.playWheelButton.scale.set(0.68);
+        this.addChild(this.playWheelButton);
+
 
         const Gol_D_RogerTexture = await Assets.load("/raw-assets/pirate/PirateKing.png");
         this.Gol_D_Roger = new Sprite(Gol_D_RogerTexture);
@@ -144,6 +144,16 @@ export class PreviewScreen extends Container {
 
         this.barrelBoard.x = barrelX;
         this.barrelBoard.y = barrelY;
+
+        // ⭐ PLAY WHEEL BUTTON — same original percentage position
+        this.playWheelButton.x = this.bg.x + this.bg.width * 0.82;
+        this.playWheelButton.y = this.bg.y + this.bg.height * 0.55;
+
+        // keep it centered like before
+        this.playWheelButton.pivot.set(
+            this.playWheelButton.width * 0.5,
+            this.playWheelButton.height * 0.5
+        );
     }
 
 
