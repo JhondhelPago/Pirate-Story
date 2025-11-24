@@ -4,8 +4,10 @@ import { Application } from 'pixi.js';
 import { initAssets } from './utils/assets';
 import { navigation } from './utils/navigation';
 import { PirateLoadScreen } from './screens/PirateLoad';
+import { PreviewScreen } from './screens/PiratePreview'; 
 import { TiledBackground } from './ui/TiledBackground';
 import { sound } from '@pixi/sound';
+import { getUrlParam } from './utils/getUrlParams';
 
 export const app = new Application();
 
@@ -41,6 +43,7 @@ function visibilityChange() {
 }
 
 async function init() {
+    // Initialize app
     await app.init({
         resolution: Math.max(window.devicePixelRatio, 2),
         backgroundColor: 0xffffff,
@@ -53,13 +56,37 @@ async function init() {
 
     document.addEventListener('visibilitychange', visibilityChange);
 
+    // Load bundles in background
     await initAssets();
 
     // Persistent background
     navigation.setBackground(TiledBackground);
 
-    // ⭐⭐ ALWAYS show PirateLoadScreen — no conditions
+    // --------------------------------------------
+    // ⭐ STEP 1: Always show loading screen first
+    // --------------------------------------------
     await navigation.showScreen(PirateLoadScreen);
+
+    // --------------------------------------------
+    // ⭐ STEP 2: Conditional navigation (custom)
+    // --------------------------------------------
+    const urlPreview = getUrlParam('preview');
+    const urlLoad    = getUrlParam('load');
+
+    if (urlPreview !== null) {
+        // directly show preview screen
+        await navigation.showScreen(PreviewScreen);
+    }
+    else if (urlLoad !== null) {
+        // show load screen again
+        await navigation.showScreen(PirateLoadScreen);
+    }
+    else {
+        // DEFAULT → after load, go to preview
+        await navigation.showScreen(PreviewScreen);
+    }
 }
+
+
 
 init();

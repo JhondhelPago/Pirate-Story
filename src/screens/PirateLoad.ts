@@ -9,6 +9,9 @@ export class PirateLoadScreen extends Container {
 
     constructor() {
         super();
+    }
+    
+    prepare() {
         this.init();
     }
 
@@ -39,14 +42,33 @@ export class PirateLoadScreen extends Container {
         this.confirmButton.anchor.set(0.5);
         this.confirmButton.x = (this.bg.width * 0.5)  - 100;
         this.confirmButton.y = (this.bg.height * 0.8) - 50;
+        this.confirmButton.interactive = true;
+        this.confirmButton.cursor = 'pointer';  
+        this.confirmButton.on('pointerover', () => {
+            this.confirmButton.scale.set(1.2); // scale up 10%
+        });
+        this.confirmButton.on('pointerout', () => {
+            this.confirmButton.scale.set(1); // reset scale
+        });
         this.addChild(this.confirmButton);
+
 
         const cancelButtonTexture = await Assets.load("/raw-assets/pirate/common/cancel-button.png");
         this.cancelButton = new Sprite(cancelButtonTexture);
         this.cancelButton.anchor.set(0.5);
         this.cancelButton.x = (this.bg.width * 0.5) + 100;
         this.cancelButton.y = (this.bg.height * 0.8) - 50;
+        this.cancelButton.interactive = true;
+        this.cancelButton.cursor = 'pointer'; 
+        this.cancelButton.on('pointerover', () => {
+            this.cancelButton.scale.set(1.2); // scale up 10%
+        });
+        this.cancelButton.on('pointerout', () => {
+            this.cancelButton.scale.set(1); // reset scale
+        });
         this.addChild(this.cancelButton);
+
+        window.dispatchEvent(new Event("resize"));
 
 
     }
