@@ -32,11 +32,10 @@ export class PlayWheelButton extends Container {
         this.on("pointerdown", () => {
         this.startWheelSpin();
 
-        // ⏳ delay navigation by 2 seconds
         setTimeout(() => {
-            navigation.showScreen(PirateLoadScreen);
-        }, 1500);
-});
+                navigation.showScreen(PirateLoadScreen);
+            }, 1500);
+    });
 
         
     }

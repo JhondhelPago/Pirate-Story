@@ -4,7 +4,8 @@ import { Application } from 'pixi.js';
 import { initAssets } from './utils/assets';
 import { navigation } from './utils/navigation';
 import { PirateLoadScreen } from './screens/PirateLoad';
-import { PreviewScreen } from './screens/PiratePreview'; 
+import { PiratePreviewScreen } from './screens/PiratePreview'; 
+import { PirateStartScreen } from './screens/PirateStartScreen';
 import { TiledBackground } from './ui/TiledBackground';
 import { sound } from '@pixi/sound';
 import { getUrlParam } from './utils/getUrlParams';
@@ -65,28 +66,29 @@ async function init() {
     // --------------------------------------------
     // ⭐ STEP 1: Always show loading screen first
     // --------------------------------------------
-    await navigation.showScreen(PirateLoadScreen);
+    await navigation.showScreen(PiratePreviewScreen);
 
     // --------------------------------------------
     // ⭐ STEP 2: Conditional navigation (custom)
     // --------------------------------------------
     const urlPreview = getUrlParam('preview');
-    const urlLoad    = getUrlParam('load');
+    const urlLoad    = null;//getUrlParam('load');
+    const urlStart  = getUrlParam('start');
 
-    if (urlPreview !== null) {
-        // directly show preview screen
-        await navigation.showScreen(PreviewScreen);
-    }
-    else if (urlLoad !== null) {
-        // show load screen again
+    if (urlLoad !== null) {
         await navigation.showScreen(PirateLoadScreen);
     }
-    else {
-        // DEFAULT → after load, go to preview
-        await navigation.showScreen(PreviewScreen);
+
+    else if (urlPreview !== null) {
+        // directly show preview screen
+        await navigation.showScreen(PiratePreviewScreen);
     }
+
+    else if (urlStart !== null) {
+        await navigation.showScreen(PirateStartScreen)
+    }
+
+    
 }
-
-
 
 init();
