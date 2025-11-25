@@ -66,7 +66,7 @@ async function init() {
     // --------------------------------------------
     // ⭐ STEP 1: Always show loading screen first
     // --------------------------------------------
-    await navigation.showScreen(PiratePreviewScreen);
+    await navigation.showScreen(PirateStartScreen);
 
     // --------------------------------------------
     // ⭐ STEP 2: Conditional navigation (custom)

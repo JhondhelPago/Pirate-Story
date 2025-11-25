@@ -1,12 +1,15 @@
 import { Container, Sprite, Assets } from "pixi.js";
+import { BarrelBoard } from "../ui/pirate/BarrelBoard";
 
 export class PirateStartScreen extends Container {
     private bg!: Sprite;
     private logo!: Sprite;
     private buyFreeSpin!: Sprite;
-    private barrelBoard!: Sprite;
+    private barrelBoard!: BarrelBoard;
     private Gol_D_Roger!: Sprite;
 
+    private deviceType: "mobile" | "tablet" | "desktop" = "desktop";
+    private orientation: "portrait" | "landscape" = "landscape";
 
     constructor() {
         super();
@@ -16,6 +19,19 @@ export class PirateStartScreen extends Container {
         this.init();
     }
 
+    // --------------------------------------------------------------
+    // 🔥 DEVICE + ORIENTATION DETECTION
+    // --------------------------------------------------------------
+    private detectDevice(width: number) {
+        if (width <= 600) this.deviceType = "mobile";
+        else if (width <= 1024) this.deviceType = "tablet";
+        else this.deviceType = "desktop";
+    }
+
+    private detectOrientation(width: number, height: number) {
+        this.orientation = height >= width ? "portrait" : "landscape";
+    }
+
     private async init() {
         // --- BACKGROUND ---
         const bgTexture = await Assets.load("/raw-assets/pirate/Background.png");
@@ -23,142 +39,186 @@ export class PirateStartScreen extends Container {
         this.bg.anchor.set(0);
         this.addChildAt(this.bg, 0);
 
-        // --- BARREL BOARD (CENTER) ---
-        const barrelBoardTexture = await Assets.load("/raw-assets/pirate/Barrel-Board.png");
-        this.barrelBoard = new Sprite(barrelBoardTexture);
-        this.barrelBoard.anchor.set(0.5);
-        this.barrelBoard.x = this.bg.width * 0.50;
-        this.barrelBoard.y = this.bg.height * 0.38;
-        this.barrelBoard.scale.set(0.6);
+        // --- BARREL BOARD ---
+        this.barrelBoard = new BarrelBoard();
         this.addChild(this.barrelBoard);
 
-        // --- LOGO (TOP-LEFT) ---
+        // --- LOGO ---
         const logoTexture = await Assets.load("/raw-assets/pirate/Logo.png");
         this.logo = new Sprite(logoTexture);
         this.logo.anchor.set(0.5);
-        this.logo.x = this.bg.width * 0.1;
-        this.logo.y = this.bg.height * 0.1;
-        this.logo.scale.set(0.8);
         this.addChild(this.logo);
 
+        // --- BUY FREE SPIN ---
         const buyFreeSpinTexture = await Assets.load("/raw-assets/pirate/common/BuyFreeSpin.png");
         this.buyFreeSpin = new Sprite(buyFreeSpinTexture);
         this.buyFreeSpin.anchor.set(0.5);
-        this.buyFreeSpin.x = this.bg.width * 0.1;
-        this.buyFreeSpin.y = this.bg.height * 0.3;
-        this.buyFreeSpin.scale.set(0.7);
         this.addChild(this.buyFreeSpin);
 
-        // --- PIRATE KING (OPTIONAL) ---
+        // --- PIRATE KING ---
         const rogerTexture = await Assets.load("/raw-assets/pirate/PirateKing1.png");
         this.Gol_D_Roger = new Sprite(rogerTexture);
         this.Gol_D_Roger.anchor.set(0.5);
-        this.Gol_D_Roger.x = this.bg.width * 0.82;
-        this.Gol_D_Roger.y = this.bg.height * 0.7;
-        this.Gol_D_Roger.scale.set(0.7);
         this.addChild(this.Gol_D_Roger);
 
         // Trigger auto-layout
         window.dispatchEvent(new Event("resize"));
     }
 
-public resize(width: number, height: number) {
-    if (!this.bg || !this.logo || !this.barrelBoard || !this.buyFreeSpin) return;
+    // ====================================================================
+    // RESPONSIVE RESIZE HANDLER
+    // ====================================================================
+    public resize(width: number, height: number) {
+        if (!this.bg) return;
 
-    const margin = 20;
+        // Detect device + orientation
+        this.detectDevice(width);
+        this.detectOrientation(width, height);
 
-    // ------------------------------------------------------
-    // ⭐ COVER BACKGROUND (FULL SCREEN)
-    // ------------------------------------------------------
-    const bgRatio = this.bg.texture.width / this.bg.texture.height;
-    const screenRatio = width / height;
+        // Resize background (cover)
+        const bgRatio = this.bg.texture.width / this.bg.texture.height;
+        const screenRatio = width / height;
 
-    if (screenRatio > bgRatio) {
-        this.bg.width = width;
-        this.bg.height = width / bgRatio;
-    } else {
-        this.bg.height = height;
-        this.bg.width = height * bgRatio;
+        if (screenRatio > bgRatio) {
+            this.bg.width = width;
+            this.bg.height = width / bgRatio;
+        } else {
+            this.bg.height = height;
+            this.bg.width = height * bgRatio;
+        }
+
+        this.bg.x = (width - this.bg.width) / 2;
+        this.bg.y = (height - this.bg.height) / 2;
+
+        // ----------------------------------------
+        // 🔥 DEVICE LAYOUT ROUTING
+        // ----------------------------------------
+        if (this.deviceType === "desktop") {
+            if (this.orientation === "portrait") this.layoutDesktopPortrait(width, height);
+            else this.layoutDesktopLandscape(width, height);
+        }
+
+        if (this.deviceType === "tablet") {
+            if (this.orientation === "portrait") this.layoutTabletPortrait(width, height);
+            else this.layoutTabletLandscape(width, height);
+        }
+
+        if (this.deviceType === "mobile") {
+            if (this.orientation === "portrait") this.layoutMobilePortrait(width, height);
+            else this.layoutMobileLandscape(width, height);
+        }
     }
 
-    // Center background
-    this.bg.x = (width - this.bg.width) / 2;
-    this.bg.y = (height - this.bg.height) / 2;
+    // ====================================================================
+    // 🔥 LAYOUTS (EDIT THESE TO MATCH YOUR DESIGNS)
+    // ====================================================================
 
-    // ======================================================
-    // ⭐ LOGO RESPONSIVE POSITION (top-left)
-    // ======================================================
-    let logoX = this.bg.x + this.bg.width * 0.10;
-    let logoY = this.bg.y + this.bg.height * 0.10;
+    // ----------------------------------------------------
+    // DESKTOP LANDSCAPE  ⭐ = your original design
+    // ----------------------------------------------------
+    private layoutDesktopLandscape(width: number, height: number) {
+        this.barrelBoard.scale.set(0.7);
+        this.barrelBoard.x = this.bg.x + this.bg.width * 0.50;
+        this.barrelBoard.y = this.bg.y + this.bg.height * 0.44;
 
-    // clamp
-    logoX = Math.min(logoX, width - this.logo.width * 0.5 - margin);
-    logoX = Math.max(logoX, this.logo.width * 0.5 + margin);
+        this.logo.scale.set(0.7);
+        this.logo.x = this.bg.x + this.bg.width * 0.1;
+        this.logo.y = this.bg.y + this.bg.height * 0.2;
 
-    logoY = Math.min(logoY, height - this.logo.height * 0.5 - margin);
-    logoY = Math.max(logoY, this.logo.height * 0.5 + margin);
+        this.buyFreeSpin.scale.set(0.6);
+        this.buyFreeSpin.x = this.bg.x + this.bg.width * 0.1;
+        this.buyFreeSpin.y = this.bg.y + this.bg.height * 0.45;
 
-    this.logo.x = logoX;
-    this.logo.y = logoY;
-
-    // responsive scale
-    if (width <= 425) this.logo.scale.set(0.55);
-    else if (width <= 768) this.logo.scale.set(0.65);
-    else this.logo.scale.set(0.75);
-
-    // ======================================================
-    // ⭐ BUY FREE SPIN (SAME RESPONSIVE RULES AS LOGO)
-    // original: x = 0.10 , y = 0.30
-    // ======================================================
-    let bfsX = this.bg.x + this.bg.width * 0.10;
-    let bfsY = this.bg.y + this.bg.height * 0.50;
-
-    // clamp so it's never off-screen
-    bfsX = Math.min(bfsX, width - this.buyFreeSpin.width * 0.5 - margin);
-    bfsX = Math.max(bfsX, this.buyFreeSpin.width * 0.5 + margin);
-
-    bfsY = Math.min(bfsY, height - this.buyFreeSpin.height * 0.5 - margin);
-    bfsY = Math.max(bfsY, this.buyFreeSpin.height * 0.5 + margin);
-
-    this.buyFreeSpin.x = bfsX;
-    this.buyFreeSpin.y = bfsY;
-
-    // responsive scale (same as logo for consistency)
-    if (width <= 425) this.buyFreeSpin.scale.set(0.55);
-    else if (width <= 768) this.buyFreeSpin.scale.set(0.65);
-    else this.buyFreeSpin.scale.set(0.75);
-
-    // ======================================================
-    // ⭐ BARREL BOARD (center-ish)
-    // ======================================================
-    let barrelX = this.bg.x + this.bg.width * 0.50;
-    let barrelY = this.bg.y + this.bg.height * 0.40;
-
-    if (width <= 425) this.barrelBoard.scale.set(0.50);
-    else if (width <= 768) this.barrelBoard.scale.set(0.60);
-    else this.barrelBoard.scale.set(0.70);
-
-    barrelX = Math.max(barrelX, this.barrelBoard.width * 0.5 + margin);
-    barrelX = Math.min(barrelX, width - this.barrelBoard.width * 0.5 - margin);
-
-    barrelY = Math.max(barrelY, this.barrelBoard.height * 0.5);
-    barrelY = Math.min(barrelY, height - this.barrelBoard.height * 0.5);
-
-    this.barrelBoard.x = barrelX;
-    this.barrelBoard.y = barrelY;
-
-    // ======================================================
-    // ⭐ GOL D. ROGER (right-bottom)
-    // ======================================================
-    if (this.Gol_D_Roger) {
-        this.Gol_D_Roger.x = this.bg.x + this.bg.width * 0.89;
-        this.Gol_D_Roger.y = this.bg.y + this.bg.height * 0.60;
-
-        if (width <= 425) this.Gol_D_Roger.scale.set(0.55);
-        else if (width <= 768) this.Gol_D_Roger.scale.set(0.65);
-        else this.Gol_D_Roger.scale.set(0.70);
+        this.Gol_D_Roger.scale.set(0.7);
+        this.Gol_D_Roger.x = this.bg.x + this.bg.width * 0.9;
+        this.Gol_D_Roger.y = this.bg.y + this.bg.height * 0.65;
     }
-}
 
+    private layoutDesktopPortrait(width: number, height: number) {
+        // Optional: unlikely needed
+    }
 
+    // ----------------------------------------------------
+    // TABLET LANDSCAPE
+    // ----------------------------------------------------
+    private layoutTabletLandscape(width: number, height: number) {
+        this.barrelBoard.scale.set(0.55);
+        this.barrelBoard.x = width * 0.55;
+        this.barrelBoard.y = height * 0.45;
+
+        this.logo.scale.set(0.7);
+        this.logo.x = width * 0.12;
+        this.logo.y = height * 0.12;
+
+        this.buyFreeSpin.scale.set(0.65);
+        this.buyFreeSpin.x = width * 0.12;
+        this.buyFreeSpin.y = height * 0.32;
+
+        this.Gol_D_Roger.scale.set(0.65);
+        this.Gol_D_Roger.x = width * 0.82;
+        this.Gol_D_Roger.y = height * 0.72;
+    }
+
+    // ----------------------------------------------------
+    // TABLET PORTRAIT
+    // ----------------------------------------------------
+    private layoutTabletPortrait(width: number, height: number) {
+        this.barrelBoard.scale.set(0.50);
+        this.barrelBoard.x = width / 2;
+        this.barrelBoard.y = height * 0.45;
+
+        this.logo.scale.set(0.60);
+        this.logo.x = width / 2;
+        this.logo.y = height * 0.10;
+
+        this.buyFreeSpin.scale.set(0.6);
+        this.buyFreeSpin.x = width / 2;
+        this.buyFreeSpin.y = height * 0.23;
+
+        this.Gol_D_Roger.scale.set(0.55);
+        this.Gol_D_Roger.x = width / 2;
+        this.Gol_D_Roger.y = height * 0.72;
+    }
+
+    // ----------------------------------------------------
+    // MOBILE PORTRAIT (main mobile layout)
+    // ----------------------------------------------------
+    private layoutMobilePortrait(width: number, height: number) {
+        this.barrelBoard.scale.set(0.45);
+        this.barrelBoard.x = width / 2;
+        this.barrelBoard.y = height * 0.4;
+
+        this.logo.scale.set(0.55);
+        this.logo.x = width / 2;
+        this.logo.y = height * 0.09;
+
+        this.buyFreeSpin.scale.set(0.5);
+        this.buyFreeSpin.x = width * .25;
+        this.buyFreeSpin.y = height * 0.73;
+
+        this.Gol_D_Roger.scale.set(0.38);
+        this.Gol_D_Roger.x = width * 0.8;
+        this.Gol_D_Roger.y = height * 0.82;
+    }
+
+    // ----------------------------------------------------
+    // MOBILE LANDSCAPE
+    // ----------------------------------------------------
+    private layoutMobileLandscape(width: number, height: number) {
+        this.barrelBoard.scale.set(0.45);
+        this.barrelBoard.x = width * 0.55;
+        this.barrelBoard.y = height * 0.55;
+
+        this.logo.scale.set(0.45);
+        this.logo.x = width * 0.85;
+        this.logo.y = height * 0.20;
+
+        this.buyFreeSpin.scale.set(0.45);
+        this.buyFreeSpin.x = width * 0.15;
+        this.buyFreeSpin.y = height * 0.40;
+
+        this.Gol_D_Roger.scale.set(1);
+        this.Gol_D_Roger.x = width * 0.10;
+        this.Gol_D_Roger.y = height * 0.75;
+    }
 }

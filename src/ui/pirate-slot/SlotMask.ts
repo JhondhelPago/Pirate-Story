@@ -65,11 +65,11 @@ export class SlotGridMask extends Container {
 
     // 5×5 matrix controlling tile symbols
     public gridMatrix: number[][] = [
-        [0, 1, 2, 0, 1],
-        [1, 0, 1, 2, 0],
-        [2, 1, 0, 1, 2],
-        [0, 2, 1, 0, 1],
-        [1, 0, 2, 1, 0]
+        [7, 2, 10, 4, 1],
+        [9, 3, 6, 8, 5],
+        [4, 1, 9, 7, 3],
+        [10, 5, 2, 6, 8],
+        [3, 7, 4, 1, 9]
     ];
 
     private tileGrid: SlotTile[][] = [];
