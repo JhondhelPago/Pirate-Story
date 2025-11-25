@@ -1,5 +1,6 @@
 import { Container, Sprite, Assets } from "pixi.js";
 import { BarrelBoard } from "../ui/pirate/BarrelBoard";
+import { ControllerPanel } from "../ui/pirate/PlayerController";
 
 export class PirateStartScreen extends Container {
     private bg!: Sprite;
@@ -7,6 +8,7 @@ export class PirateStartScreen extends Container {
     private buyFreeSpin!: Sprite;
     private barrelBoard!: BarrelBoard;
     private Gol_D_Roger!: Sprite;
+    private playerController!: ControllerPanel;
 
     private deviceType: "mobile" | "tablet" | "desktop" = "desktop";
     private orientation: "portrait" | "landscape" = "landscape";
@@ -61,6 +63,11 @@ export class PirateStartScreen extends Container {
         this.Gol_D_Roger.anchor.set(0.5);
         this.addChild(this.Gol_D_Roger);
 
+        // --- CONTROLLER PANEL ---
+        this.playerController = new ControllerPanel();
+        this.addChild(this.playerController);
+
+
         // Trigger auto-layout
         window.dispatchEvent(new Event("resize"));
     }
@@ -107,6 +114,12 @@ export class PirateStartScreen extends Container {
             if (this.orientation === "portrait") this.layoutMobilePortrait(width, height);
             else this.layoutMobileLandscape(width, height);
         }
+
+        // Resize the controller panel
+        if (this.playerController) {
+            this.playerController.resize(width, height);
+        }
+
     }
 
     // ====================================================================
