@@ -29,12 +29,14 @@ export class BarrelBoard extends Container {
         this.gridContainer.addChild(slotMask);
         this.addChild(this.gridContainer);
 
-        
+        this.emit("ready");
     }
 
     public setScaleByScreen(width: number) {
-        if (width <= 425) this.scale.set(0.45);
-        else if (width <= 768) this.scale.set(0.55);
-        else this.scale.set(0.58);
+        if (width <= 425) this.scale.set(0.25);
+        else if (width <= 768) this.scale.set(0.3);
+        else if (width <= 900) this.scale.set(0.4);
+        else if (width <= 1000) this.scale.set(0.5);
+        else this.scale.set(0.56);
     }
 }
