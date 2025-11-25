@@ -1,15 +1,9 @@
-import { Container, Sprite, Assets, Graphics } from "pixi.js";
+import { Container, Sprite, Assets } from "pixi.js";
+import { SlotGridMask } from "../pirate-slot/SlotMask";
 
 export class BarrelBoard extends Container {
     private bg!: Sprite;
     public gridContainer!: Container;
-
-    private rows = 5;
-    private cols = 5;
-
-    // 🔥 Bigger grid immediately
-    private cellSize = 140;
-    private spacing = 14;
 
     constructor() {
         super();
@@ -24,43 +18,16 @@ export class BarrelBoard extends Container {
         this.bg.anchor.set(0.5);
         this.addChild(this.bg);
 
+        // --- SLOT MASK GRID ---
+        const slotMask = new SlotGridMask();
+        slotMask.x = 0;
+        slotMask.y = 0;
+        slotMask.scale.set(0.95); // size fits center beige area
+
         // GRID CONTAINER
         this.gridContainer = new Container();
+        this.gridContainer.addChild(slotMask);
         this.addChild(this.gridContainer);
-
-        this.createGrid();
-
-        // Center grid inside the board
-        this.gridContainer.pivot.set(
-            this.gridContainer.width * 0.5,
-            this.gridContainer.height * 0.5
-        );
-    }
-
-    private createGrid() {
-        this.gridContainer.removeChildren(); // clear old grid
-
-        for (let r = 0; r < this.rows; r++) {
-            for (let c = 0; c < this.cols; c++) {
-                const box = new Graphics();
-                box.beginFill(0xffffff, 0.25);
-                box.drawRect(0, 0, this.cellSize, this.cellSize);
-                box.endFill();
-
-                box.x = c * (this.cellSize + this.spacing);
-                box.y = r * (this.cellSize + this.spacing);
-
-                this.gridContainer.addChild(box);
-            }
-        }
-    }
-
-    public setGridScale(scale: number) {
-        this.gridContainer.scale.set(scale);
-        this.gridContainer.pivot.set(
-            this.gridContainer.width * 0.5,
-            this.gridContainer.height * 0.5
-        );
     }
 
     public setScaleByScreen(width: number) {

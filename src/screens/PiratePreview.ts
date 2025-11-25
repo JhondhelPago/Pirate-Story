@@ -1,4 +1,4 @@
-import { Container, Sprite, Assets } from 'pixi.js';
+import { Container, Sprite, Assets, Ticker } from 'pixi.js';
 import { PlayWheelButton } from '../ui/pirate/PlayWheelButton';
 import { BarrelBoard } from '../ui/pirate/BarrelBoard';
 
@@ -93,6 +93,9 @@ export class PiratePreviewScreen extends Container {
         window.dispatchEvent(new Event("resize"));
     }
 
+
+
+
     // ============================================================
     //             RESIZE HANDLER
     // ============================================================
@@ -165,4 +168,6 @@ export class PiratePreviewScreen extends Container {
             this.playWheelButton.height * 0.5
         );
     }
+
+
 }
