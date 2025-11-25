@@ -72,7 +72,7 @@ async function init() {
     // ⭐ STEP 2: Conditional navigation (custom)
     // --------------------------------------------
     const urlPreview = getUrlParam('preview');
-    const urlLoad    = null;//getUrlParam('load');
+    const urlLoad    = getUrlParam('load');
     const urlStart  = getUrlParam('start');
 
     if (urlLoad !== null) {

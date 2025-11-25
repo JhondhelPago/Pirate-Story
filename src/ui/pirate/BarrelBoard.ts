@@ -28,6 +28,8 @@ export class BarrelBoard extends Container {
         this.gridContainer = new Container();
         this.gridContainer.addChild(slotMask);
         this.addChild(this.gridContainer);
+
+        
     }
 
     public setScaleByScreen(width: number) {
