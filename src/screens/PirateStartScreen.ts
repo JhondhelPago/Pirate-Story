@@ -25,7 +25,7 @@ export class PirateStartScreen extends Container {
     // 🔥 DEVICE + ORIENTATION DETECTION
     // --------------------------------------------------------------
     private detectDevice(width: number) {
-        if (width <= 600) this.deviceType = "mobile";
+        if (width <= 425) this.deviceType = "mobile";
         else if (width <= 1024) this.deviceType = "tablet";
         else this.deviceType = "desktop";
     }
@@ -160,7 +160,7 @@ export class PirateStartScreen extends Container {
         this.barrelBoard.y = height * 0.45;
 
         this.logo.scale.set(0.7);
-        this.logo.x = width * 0.12;
+        this.logo.x = width * 0.1;
         this.logo.y = height * 0.12;
 
         this.buyFreeSpin.scale.set(0.65);
@@ -168,8 +168,8 @@ export class PirateStartScreen extends Container {
         this.buyFreeSpin.y = height * 0.32;
 
         this.Gol_D_Roger.scale.set(0.65);
-        this.Gol_D_Roger.x = width * 0.82;
-        this.Gol_D_Roger.y = height * 0.72;
+        this.Gol_D_Roger.x = width ;
+        this.Gol_D_Roger.y = height ;
     }
 
     // ----------------------------------------------------
@@ -178,19 +178,21 @@ export class PirateStartScreen extends Container {
     private layoutTabletPortrait(width: number, height: number) {
         this.barrelBoard.scale.set(0.50);
         this.barrelBoard.x = width / 2;
-        this.barrelBoard.y = height * 0.45;
+        this.barrelBoard.y = height * 0.4;
 
         this.logo.scale.set(0.60);
         this.logo.x = width / 2;
         this.logo.y = height * 0.10;
 
         this.buyFreeSpin.scale.set(0.6);
-        this.buyFreeSpin.x = width / 2;
-        this.buyFreeSpin.y = height * 0.23;
+        this.buyFreeSpin.x = width * 0.2;
+        this.buyFreeSpin.y = height * 0.73;
 
-        this.Gol_D_Roger.scale.set(0.55);
-        this.Gol_D_Roger.x = width / 2;
-        this.Gol_D_Roger.y = height * 0.72;
+        this.Gol_D_Roger.scale.set(0.5);
+        this.Gol_D_Roger.anchor.set(1, 1); // bottom-right anchor
+        this.Gol_D_Roger.x = width;   
+        this.Gol_D_Roger.y = height;  
+
     }
 
     // ----------------------------------------------------
@@ -210,8 +212,8 @@ export class PirateStartScreen extends Container {
         this.buyFreeSpin.y = height * 0.73;
 
         this.Gol_D_Roger.scale.set(0.38);
-        this.Gol_D_Roger.x = width * 0.8;
-        this.Gol_D_Roger.y = height * 0.82;
+        this.Gol_D_Roger.x = width - 80;
+        this.Gol_D_Roger.y = height - 100;
     }
 
     // ----------------------------------------------------
@@ -224,7 +226,7 @@ export class PirateStartScreen extends Container {
 
         this.logo.scale.set(0.45);
         this.logo.x = width * 0.85;
-        this.logo.y = height * 0.20;
+        this.logo.y = height * 0.50;
 
         this.buyFreeSpin.scale.set(0.45);
         this.buyFreeSpin.x = width * 0.15;

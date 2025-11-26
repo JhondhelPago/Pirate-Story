@@ -64,51 +64,88 @@ export class ControllerPanel extends Container {
     // ★ RESPONSIVE POSITIONING BASED ON DESIGN TEMPLATE ★
     // ==========================================================
     public resize(w: number, h: number) {
-    // Background stays
-    this.bgBar.width = w;
-    this.bgBar.height = 140;
+        const isMobile = w <= 768;
 
-    // Panel positioned at bottom
-    this.y = h - 140;
+        // Background stays
+        this.bgBar.width = w;
+        this.bgBar.height = isMobile ? 180 : 140;
 
-    // center Y inside bar
-    const centerY = 140 / 2;
+        // Panel positioned at bottom
+        this.y = h - this.bgBar.height;
 
-    // ----------------------------------------------------------
-    // LEFT SIDE (manual)
-    // ----------------------------------------------------------
-    this.menuBtn.x = 150; this.menuBtn.y = centerY - 40; this.infoBtn.x = 100 + 100; 
-    this.infoBtn.y = centerY; this.settingsBtn.x = 150; 
-    this.settingsBtn.y = centerY + 40;
+        const centerY = this.bgBar.height / 2;
 
-    // ----------------------------------------------------------
-    // RIGHT SIDE — FIXED SPACING (based on your screenshot)
-    // ----------------------------------------------------------
-    const PAD_RIGHT = 150;
+        // ============================================================
+        // DESKTOP VERSION (landscape, wide screens)
+        // ============================================================
+        if (!isMobile) {
 
-    // AUTOPLAY = far right
-    this.autoplayBtn.x = w - PAD_RIGHT;
-    this.autoplayBtn.y = centerY + 35;
+            // LEFT SIDE (desktop)
+            this.menuBtn.x = 150;
+            this.menuBtn.y = centerY - 40;
 
-    // minusBtn.x snapped to autoplay
-    this.minusBtn.x = this.autoplayBtn.x;
-    this.minusBtn.y = centerY - 30;
+            this.infoBtn.x = 200;
+            this.infoBtn.y = centerY;
 
-    // Medium gap between spin and minus (40px)
-    const GAP_MED = 15;
+            this.settingsBtn.x = 150;
+            this.settingsBtn.y = centerY + 40;
 
-    // Large gap between plus and spin (30px)
-    const GAP_LARGE = 15;
+            // RIGHT SIDE (desktop)
+            const PAD_RIGHT = 150;
 
-    // Place spin to the LEFT of minus
-    this.spinBtn.x =
-        this.minusBtn.x - (this.minusBtn.width / 2) - GAP_MED - (this.spinBtn.width / 2);
-    this.spinBtn.y = centerY;
+            this.autoplayBtn.x = w - PAD_RIGHT;
+            this.autoplayBtn.y = centerY + 35;
 
-    // Place plus to the LEFT of spin
-    this.plusBtn.x =
-        this.spinBtn.x - (this.spinBtn.width / 2) - GAP_LARGE - (this.plusBtn.width / 2);
-    this.plusBtn.y = centerY - 35;
+            this.minusBtn.x = this.autoplayBtn.x;
+            this.minusBtn.y = centerY - 30;
+
+            const GAP = 20;
+
+            this.spinBtn.x =
+                this.minusBtn.x - (this.minusBtn.width / 2) - GAP - (this.spinBtn.width / 2);
+            this.spinBtn.y = centerY;
+
+            this.plusBtn.x =
+                this.spinBtn.x - (this.spinBtn.width / 2) - GAP - (this.plusBtn.width / 2);
+            this.plusBtn.y = centerY - 35;
+
+            return; // STOP HERE, do not continue
+        }
+
+        // ============================================================
+        // MOBILE VERSION (portrait or narrow screens)
+        // ============================================================
+
+        // Bg height is taller for mobile
+        this.bgBar.height = 180;
+
+        // LEFT SIDE — VERTICAL STACK
+        this.menuBtn.x = 40;
+        this.menuBtn.y = this.bgBar.height/2 - 40;
+
+        this.infoBtn.x = 40 + 40;
+        this.infoBtn.y = this.bgBar.height/2;
+
+        this.settingsBtn.x = 40;
+        this.settingsBtn.y = this.bgBar.height/2 + 40;
+
+        // CENTER — BIG SPIN
+        this.spinBtn.x = w / 2;
+        this.spinBtn.y = this.bgBar.height / 2 + 20;
+        this.spinBtn.scale.set(.8); // slightly bigger for mobile
+
+        // RIGHT SIDE — VERTICAL STACK
+        const rightX = w - 40;
+
+        this.plusBtn.x = rightX;
+        this.plusBtn.y = this.bgBar.height/2 - 40;
+
+        this.autoplayBtn.x = rightX - 40;
+        this.autoplayBtn.y = this.bgBar.height/2;
+
+        this.minusBtn.x = rightX;
+        this.minusBtn.y = this.bgBar.height/2 + 40;
+
 
     }
 
