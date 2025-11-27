@@ -1,94 +1,67 @@
 import '@esotericsoftware/spine-pixi-v8';
+import { Application, Graphics } from 'pixi.js';
 
-import { Application } from 'pixi.js';
-import { initAssets } from './utils/assets';
-import { navigation } from './utils/navigation';
-import { PirateLoadScreen } from './screens/PirateLoad';
-import { PiratePreviewScreen } from './screens/PiratePreview'; 
-import { PirateStartScreen } from './screens/PirateStartScreen';
-import { TiledBackground } from './ui/TiledBackground';
-import { sound } from '@pixi/sound';
-import { getUrlParam } from './utils/getUrlParams';
-
-export const app = new Application();
-
-function resize() {
-    const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
-    const minWidth = 375;
-    const minHeight = 700;
-
-    const scaleX = windowWidth < minWidth ? minWidth / windowWidth : 1;
-    const scaleY = windowHeight < minHeight ? minHeight / windowHeight : 1;
-    const scale = Math.max(scaleX, scaleY);
-
-    const width = windowWidth * scale;
-    const height = windowHeight * scale;
-
-    app.renderer.canvas.style.width = `${windowWidth}px`;
-    app.renderer.canvas.style.height = `${windowHeight}px`;
-
-    window.scrollTo(0, 0);
-    app.renderer.resize(width, height);
-    navigation.resize(width, height);
-}
-
-function visibilityChange() {
-    if (document.hidden) {
-        sound.pauseAll();
-        navigation.blur();
-    } else {
-        sound.resumeAll();
-        navigation.focus();
-    }
-}
+const app = new Application();
 
 async function init() {
-    // Initialize app
+    // Detect mobile/desktop
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+    );
+    document.documentElement.id = isMobile ? 'isMobile' : 'isDesktop';
+
+    // Initialize PIXI (IMPORTANT: width & height)
     await app.init({
-        resolution: Math.max(window.devicePixelRatio, 2),
-        backgroundColor: 0xffffff,
+        width: 1920,
+        height: 1080,
+        resolution: 1,
+        backgroundColor: 0x222222,
     });
 
+    // Add canvas to page
     document.body.appendChild(app.canvas);
+    app.canvas.style.border = '5px solid lime';
 
+    // --- RED CIRCLE TEST ---
+    const g = new Graphics();
+    g.beginFill(0xff0000);
+    g.drawCircle(0, 0, 100);
+    g.endFill();
+    g.position.set(400, 400);
+
+    app.stage.addChild(g);
+
+    // --- ENABLE RESIZE ---
     window.addEventListener('resize', resize);
     resize();
 
-    document.addEventListener('visibilitychange', visibilityChange);
+    console.log('Rendering OK!');
+}
 
-    // Load bundles in background
-    await initAssets();
+function resize() {
+    const isMobile = document.documentElement.id === 'isMobile';
 
-    // Persistent background
-    navigation.setBackground(TiledBackground);
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
 
-    // --------------------------------------------
-    // ⭐ STEP 1: Always show loading screen first
-    // --------------------------------------------
-    await navigation.showScreen(PirateStartScreen);
+    const baseWidth = isMobile ? 1080 : 1920;
+    const baseHeight = isMobile ? 1920 : 1080;
 
-    // --------------------------------------------
-    // ⭐ STEP 2: Conditional navigation (custom)
-    // --------------------------------------------
-    const urlPreview = getUrlParam('preview');
-    const urlLoad    = getUrlParam('load');
-    const urlStart  = getUrlParam('start');
+    const scaleX = windowWidth / baseWidth;
+    const scaleY = windowHeight / baseHeight;
+    const scale = Math.min(scaleX, scaleY);
 
-    if (urlLoad !== null) {
-        await navigation.showScreen(PirateLoadScreen);
-    }
+    const scaledWidth = baseWidth * scale;
+    const scaledHeight = baseHeight * scale;
 
-    else if (urlPreview !== null) {
-        // directly show preview screen
-        await navigation.showScreen(PiratePreviewScreen);
-    }
+    const offsetX = (windowWidth - scaledWidth) / 2;
+    const offsetY = (windowHeight - scaledHeight) / 2;
 
-    else if (urlStart !== null) {
-        await navigation.showScreen(PirateStartScreen)
-    }
-
-    
+    app.canvas.style.width = `${scaledWidth}px`;
+    app.canvas.style.height = `${scaledHeight}px`;
+    app.canvas.style.position = 'absolute';
+    app.canvas.style.left = `${offsetX}px`;
+    app.canvas.style.top = `${offsetY}px`;
 }
 
 init();
